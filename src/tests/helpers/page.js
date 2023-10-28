@@ -126,6 +126,10 @@ export async function noNextAttributeMutationNamed(page, elementId, attributeNam
   return !records.some(([name, _, target]) => name == attributeName && target == elementId)
 }
 
+export function readCspViolations(page, length) {
+  return readArray(page, "cspViolations", length)
+}
+
 export async function noNextEventNamed(page, eventName) {
   const records = await readEventLogs(page, 1)
   return !records.some(([name]) => name == eventName)

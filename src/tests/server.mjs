@@ -6,6 +6,7 @@ import path from "path"
 import url from "url"
 import { fileURLToPath } from 'url'
 import fs from "fs"
+import querystring from "querystring"
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -23,6 +24,22 @@ router.use((request, response, next) => {
   } else {
     response.sendStatus(422)
   }
+})
+
+router.get('/csp', (request, response) => {
+  const cspDirectives = request.query
+
+  const filepath = path.join(__dirname, cspDirectives.file)
+  delete cspDirectives.file
+
+  const cspHeaderValue = Object.entries(cspDirectives)
+    .map(([key, value]) => `${key} ${value}`)
+    .join('; ')
+
+  response.type('html')
+    .setHeader('Content-Security-Policy', cspHeaderValue)
+    .status(200)
+    .sendFile(filepath)
 })
 
 router.post("/redirect", (request, response) => {

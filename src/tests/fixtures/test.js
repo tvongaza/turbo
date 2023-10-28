@@ -65,6 +65,18 @@
     },
     { once: true }
   )
+
+  if (typeof window.ReportingObserver === 'function') {
+    window.cspViolations = []
+    // eslint-disable-next-line no-undef
+    new ReportingObserver((reports) => {
+      for (const report of reports) {
+        if (report.type === "csp-violation") {
+          window.cspViolations.push(report)
+        }
+      }
+    }, { buffered: false }).observe()
+  }
 })([
   "turbo:click",
   "turbo:before-stream-render",
